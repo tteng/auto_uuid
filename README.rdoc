@@ -1,6 +1,38 @@
 = auto_uuid
 
-Description goes here.
+== install 
+  gem install auto_uuid
+
+== usage
+  say you have each an column called 'uuid' in many of your tables, and you want them automatically be 
+set with universal unique id, unless it's not empty.
+  After install auto uuid gem, all these "uuid" column will be set after creating the object.
+
+== code
+
+require 'uuid'
+
+module AutoUUID
+  def self.included(base)
+    base.send :include, InstanceMethods
+  end
+
+  module InstanceMethods
+
+    def before_create
+      super
+      setup_uuid if (self.respond_to?("uuid=") && self.uuid.nil?)
+    end
+
+    def setup_uuid
+      self.uuid = UUID.generate
+    end
+
+  end
+end
+
+ActiveRecord::Base.send :include, AutoUUID
+
 
 == Note on Patches/Pull Requests
  
